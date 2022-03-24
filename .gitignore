@@ -1,0 +1,11 @@
+.DS_Store
+
+/.idea/
+
+/bin/*
+
+/.env.local
+/.env.makefile
+
+/cover.out
+/cover.html
