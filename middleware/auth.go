@@ -106,6 +106,11 @@ func (p HeaderAuthProvider) Token(r *http.Request) (string, bool) {
 		return "", false
 	}
 
-	header := strings.TrimPrefix(headers[0], p.Prefix)
-	return strings.TrimSpace(header), true
+	header := headers[0]
+	if p.Prefix != "" {
+		header = strings.TrimPrefix(header, p.Prefix)
+		header = strings.TrimSpace(header)
+	}
+
+	return header, true
 }
