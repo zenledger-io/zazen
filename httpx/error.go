@@ -6,7 +6,8 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/zenledger-io/go-utils/telemetry"
+	"github.com/zenledger-io/go-utils/logger"
+	"go.uber.org/zap"
 )
 
 // Error is a JSON-serializable HTTP error.
@@ -35,7 +36,7 @@ type errorResponse struct {
 
 // Write writes the error to the http.Writer.
 func (e *Error) Write(ctx context.Context, w http.ResponseWriter) {
-	t := telemetry.FromContext(ctx)
+	l := logger.FromContext(ctx)
 
 	w.Header().Set("Content-Type", jsonContentType)
 
@@ -58,6 +59,6 @@ func (e *Error) Write(ctx context.Context, w http.ResponseWriter) {
 	}
 
 	if err := json.NewEncoder(w).Encode(&r); err != nil {
-		t.Logger.Error().Err(err).Msg("json encode error response")
+		l.Error("json encode error response", zap.Error(err))
 	}
 }

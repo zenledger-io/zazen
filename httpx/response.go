@@ -5,7 +5,8 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/zenledger-io/go-utils/telemetry"
+	"github.com/zenledger-io/go-utils/logger"
+	"go.uber.org/zap"
 )
 
 const (
@@ -34,12 +35,12 @@ func NewResponse(payload interface{}) *Response {
 // Write writes a response to an http.ResponseWriter.
 // Any errors encountered will be automatically handled.
 func (r *Response) Write(ctx context.Context, w http.ResponseWriter) {
-	t := telemetry.FromContext(ctx)
+	l := logger.FromContext(ctx)
 
 	w.Header().Set("Content-Type", jsonContentType)
 	w.WriteHeader(r.StatusCode)
 
 	if err := json.NewEncoder(w).Encode(r.Payload); err != nil {
-		t.Logger.Error().Err(err).Msg("json encode response")
+		l.Error("json encode response", zap.Error(err))
 	}
 }

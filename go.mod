@@ -7,8 +7,9 @@ require (
 	github.com/go-chi/chi/v5 v5.0.7
 	github.com/honeybadger-io/honeybadger-go v0.5.0
 	github.com/prometheus/client_golang v1.12.1
-	github.com/rs/zerolog v1.26.1
+	github.com/slok/go-http-metrics v0.10.0
 	github.com/stretchr/testify v1.7.1
+	go.uber.org/zap v1.21.0
 	gopkg.in/DataDog/dd-trace-go.v1 v1.36.2
 )
 
@@ -40,11 +41,9 @@ require (
 	github.com/prometheus/common v0.32.1 // indirect
 	github.com/prometheus/procfs v0.7.3 // indirect
 	github.com/shirou/gopsutil v2.18.12+incompatible // indirect
-	github.com/slok/go-http-metrics v0.10.0 // indirect
 	github.com/tinylib/msgp v1.1.2 // indirect
 	go.uber.org/atomic v1.9.0 // indirect
 	go.uber.org/multierr v1.8.0 // indirect
-	go.uber.org/zap v1.21.0 // indirect
 	golang.org/x/sys v0.0.0-20220114195835-da31bd327af9 // indirect
 	golang.org/x/time v0.0.0-20211116232009-f0f3c7e86c11 // indirect
 	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
