@@ -17,12 +17,12 @@ func TestResponse(t *testing.T) {
 	}{
 		{
 			Desc:       "empty payload",
-			Response:   NewResponse(nil),
+			Response:   NewResponseOK(nil),
 			StatusCode: http.StatusOK,
 		},
 		{
 			Desc:       "non-empty payload",
-			Response:   NewResponse("111"),
+			Response:   NewResponseOK("111"),
 			StatusCode: http.StatusOK,
 		},
 		{

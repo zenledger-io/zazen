@@ -16,21 +16,17 @@ type ZapLogFormatter struct {
 }
 
 func (l *ZapLogFormatter) NewLogEntry(r *http.Request) middleware.LogEntry {
-	logger := l.Logger.With(
-		zap.Time("ts_utc", time.Now().UTC()),
-		zap.String("req_id", middleware.GetReqID(r.Context())),
-		zap.String("scheme", r.URL.Scheme),
-		zap.String("proto", r.Proto),
-		zap.String("method", r.Method),
-		zap.String("remote_addr", r.RemoteAddr),
-		zap.String("user_agent", r.UserAgent()),
-		zap.String("url", r.URL.String()),
-	)
-
-	logger.Info("begin request")
-
 	return &zapLoggerEntry{
-		Logger: logger,
+		Logger: l.Logger.With(
+			zap.Time("ts_utc", time.Now().UTC()),
+			zap.String("req_id", middleware.GetReqID(r.Context())),
+			zap.String("scheme", r.URL.Scheme),
+			zap.String("proto", r.Proto),
+			zap.String("method", r.Method),
+			zap.String("remote_addr", r.RemoteAddr),
+			zap.String("user_agent", r.UserAgent()),
+			zap.String("url", r.URL.String()),
+		),
 	}
 }
 
@@ -38,11 +34,11 @@ type zapLoggerEntry struct {
 	Logger *zap.Logger
 }
 
-func (l *zapLoggerEntry) Write(status, bytes int, header http.Header, elapsed time.Duration, extra interface{}) {
+func (l *zapLoggerEntry) Write(status, bytes int, header http.Header, d time.Duration, extra interface{}) {
 	l.Logger = l.Logger.With(
 		zap.Int("resp_status", status),
 		zap.Int("resp_bytes", bytes),
-		zap.Int("resp_elapsed_ms", int(elapsed.Nanoseconds()/1000000)))
+		zap.Duration("duration", d))
 
 	l.Logger.Info("end request")
 }

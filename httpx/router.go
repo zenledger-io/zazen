@@ -82,7 +82,7 @@ func status(w http.ResponseWriter, r *http.Request) {
 		Hash    string `json:"hash"`
 	}
 
-	NewResponse(response{
+	NewResponseOK(response{
 		Version: version.Version,
 		Hash:    version.Hash,
 	}).Write(r.Context(), w)

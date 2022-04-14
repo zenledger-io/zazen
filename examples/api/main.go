@@ -49,7 +49,7 @@ func newAPI() chi.Router {
 
 		l.Info("birds handler")
 		time.Sleep(100 * time.Millisecond)
-		httpx.NewResponse(birds).Write(r.Context(), w)
+		httpx.NewResponseOK(birds).Write(r.Context(), w)
 	})
 
 	r.Get("/boom", func(w http.ResponseWriter, r *http.Request) {

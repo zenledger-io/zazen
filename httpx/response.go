@@ -23,9 +23,9 @@ type Response struct {
 	StatusCode int
 }
 
-// NewResponse creates a new Response for a payload
+// NewResponseOK creates a new Response for a payload
 // with HTTP 200 as the status code.
-func NewResponse(payload interface{}) *Response {
+func NewResponseOK(payload interface{}) *Response {
 	return &Response{
 		Payload:    payload,
 		StatusCode: http.StatusOK,
