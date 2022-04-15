@@ -34,14 +34,13 @@ func main() {
 	l.Info("listening", zap.String("addr", addr))
 
 	http.ListenAndServe(addr, httpx.NewAPIRouter(httpx.APIRouterConfig{
-		APIVersion:  1,
-		APIRouter:   newAPI(),
+		APIRouters:  newAPIMap(),
 		ServiceName: "birds",
 		Logger:      l,
 	}))
 }
 
-func newAPI() chi.Router {
+func newAPIMap() map[int]chi.Router {
 	r := chi.NewRouter()
 
 	r.Get("/birds", func(w http.ResponseWriter, r *http.Request) {
@@ -56,5 +55,5 @@ func newAPI() chi.Router {
 		panic("boom")
 	})
 
-	return r
+	return map[int]chi.Router{1: r}
 }

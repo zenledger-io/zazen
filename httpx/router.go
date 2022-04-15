@@ -20,13 +20,11 @@ var (
 
 // APIRouterConfig is configuration for an APIRouter.
 type APIRouterConfig struct {
-	// APIVersion is the URL-based API version. All routes created
-	// on a router with this config will be nested under
+	// APIRouters is a map of API versions to subroutes. All routes
+	// created on a router with this config will be nested under
 	// "/v1" when APIVersion is 1.
-	APIVersion int
 
-	// APIRouter is the router to be mounted under the API verison.
-	APIRouter chi.Router
+	APIRouters map[int]chi.Router
 
 	// Logger is the base logger to be used for all requests.
 	Logger *zap.Logger
@@ -68,9 +66,11 @@ func NewAPIRouter(cfg APIRouterConfig) chi.Router {
 	r.Get("/metrics", promhttp.Handler().ServeHTTP)
 	r.Get("/status", status)
 
-	// API
-	ver := fmt.Sprintf("/v%d", cfg.APIVersion)
-	r.Mount(ver, cfg.APIRouter)
+	// API routers
+	for v, rr := range cfg.APIRouters {
+		ver := fmt.Sprintf("/v%d", v)
+		r.Mount(ver, rr)
+	}
 
 	return r
 }
