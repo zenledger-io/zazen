@@ -7,7 +7,6 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
-	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"go.uber.org/zap"
 
 	"github.com/zenledger-io/go-utils/httpx/middlewarex"
@@ -59,11 +58,7 @@ func NewAPIRouter(cfg APIRouterConfig) chi.Router {
 	}
 	r.Use(middleware.Timeout(timeout))
 
-	// Prometheus
-	r.Use(middlewarex.NewMetrics())
-
 	// Default routes
-	r.Get("/metrics", promhttp.Handler().ServeHTTP)
 	r.Get("/status", status)
 
 	// API routers

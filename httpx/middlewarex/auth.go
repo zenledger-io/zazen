@@ -36,7 +36,15 @@ func Auth(cfg AuthConfig) Func {
 	}
 }
 
-func AuthorizationHeaderAuth(optional bool, tokens ...string) Func {
+func AuthorizationHeaderAuth(tokens ...string) Func {
+	return authorizationHeaderAuth(false, tokens)
+}
+
+func OptionalAuthorizationHeaderAuth(tokens ...string) Func {
+	return authorizationHeaderAuth(true, tokens)
+}
+
+func authorizationHeaderAuth(optional bool, tokens []string) Func {
 	return Auth(AuthConfig{
 		Authorizer:   NewTokenAuthorizer(tokens...),
 		AuthProvider: NewAuthorizationHeaderAuthProvider(),
