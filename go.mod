@@ -7,7 +7,6 @@ require (
 	github.com/google/uuid v1.3.0
 	github.com/gorilla/mux v1.8.0
 	github.com/honeybadger-io/honeybadger-go v0.5.0
-	github.com/lib/pq v1.10.5
 	github.com/stretchr/testify v1.7.0
 	gopkg.in/DataDog/dd-trace-go.v1 v1.36.2
 )

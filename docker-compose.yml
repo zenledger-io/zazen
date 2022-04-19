@@ -1,0 +1,9 @@
+version: "3.8"
+
+services:
+  test:
+    image: golang:1.18
+    volumes:
+      - .:/go/src/github.com/zenledger-io/go-utils
+    working_dir: /go/src/github.com/zenledger-io/go-utils
+    command: sh -c "go test -coverprofile=cover.out ./... -race && go tool cover -html=cover.out -o cover.html"
