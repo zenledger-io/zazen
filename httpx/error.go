@@ -6,8 +6,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/zenledger-io/go-utils/logger"
-	"go.uber.org/zap"
+	"github.com/zenledger-io/go-utils/observe"
 )
 
 // Error is a JSON-serializable HTTP error.
@@ -34,9 +33,11 @@ type errorResponse struct {
 	Message string `json:"message"`
 }
 
-// Write writes the error to the http.Writer.
+// Write observes the values of the error and writes it to the http.Writer.
 func (e *Error) Write(ctx context.Context, w http.ResponseWriter) {
-	l := logger.FromContext(ctx)
+	obs := observe.FromContext(ctx)
+
+	defer obs.Error(ctx, e.Message, e.Err)
 
 	w.Header().Set("Content-Type", jsonContentType)
 
@@ -59,6 +60,6 @@ func (e *Error) Write(ctx context.Context, w http.ResponseWriter) {
 	}
 
 	if err := json.NewEncoder(w).Encode(&r); err != nil {
-		l.Error("json encode error response", zap.Error(err))
+		obs.Error(ctx, "json encode error response", err)
 	}
 }
