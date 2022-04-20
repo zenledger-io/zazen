@@ -1,4 +1,4 @@
-package middleware
+package middlewarex
 
 import (
 	"context"
@@ -11,6 +11,14 @@ type AuthConfig struct {
 	AuthProvider
 	Optional bool
 }
+
+var (
+	authContextKey contextKey = "auth"
+)
+
+type contextKey string
+
+type Func func(server http.HandlerFunc) http.HandlerFunc
 
 func Auth(cfg AuthConfig) Func {
 	return func(next http.HandlerFunc) http.HandlerFunc {
