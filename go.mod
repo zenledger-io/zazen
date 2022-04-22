@@ -1,4 +1,4 @@
-module github.com/zenledger-io/go-utils
+module github.com/zenledger-io/zazen
 
 go 1.18
 
