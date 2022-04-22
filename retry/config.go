@@ -2,9 +2,10 @@ package retry
 
 import (
 	"context"
-	"github.com/zenledger-io/go-utils/timeutils"
 	"math/rand"
 	"time"
+
+	"github.com/zenledger-io/zazen/timeutils"
 )
 
 var (

@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/zenledger-io/go-utils/observe"
+	"github.com/zenledger-io/zazen/observe"
 )
 
 // Error is a JSON-serializable HTTP error.

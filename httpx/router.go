@@ -10,9 +10,9 @@ import (
 	"go.uber.org/zap"
 	chitrace "gopkg.in/DataDog/dd-trace-go.v1/contrib/go-chi/chi.v5"
 
-	"github.com/zenledger-io/go-utils/httpx/middlewarex"
-	"github.com/zenledger-io/go-utils/observe"
-	"github.com/zenledger-io/go-utils/version"
+	"github.com/zenledger-io/zazen/httpx/middlewarex"
+	"github.com/zenledger-io/zazen/observe"
+	"github.com/zenledger-io/zazen/version"
 )
 
 var (

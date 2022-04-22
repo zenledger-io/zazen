@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/zenledger-io/go-utils/logger"
+	"github.com/zenledger-io/zazen/logger"
 	"go.uber.org/zap"
 )
 

@@ -5,8 +5,8 @@ import (
 	"time"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/zenledger-io/go-utils/httpx"
-	"github.com/zenledger-io/go-utils/logger"
+	"github.com/zenledger-io/zazen/httpx"
+	"github.com/zenledger-io/zazen/logger"
 	"go.uber.org/zap"
 )
 

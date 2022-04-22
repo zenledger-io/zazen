@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"runtime/debug"
 
-	"github.com/zenledger-io/go-utils/observe"
+	"github.com/zenledger-io/zazen/observe"
 )
 
 func Recoverer(next http.Handler) http.Handler {
