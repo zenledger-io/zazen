@@ -26,7 +26,7 @@ func TestRedisLocker(t *testing.T) {
 		RetryDurMin: 10 * time.Millisecond,
 		RetryDurMax: 50 * time.Millisecond,
 	}
-	locker := NewRedisLocker(rc, "testkey", 3*time.Second, &lopts)
+	locker := NewRedisLocker(rc, "TestRedisLocker", 3*time.Second, &lopts)
 	runs := 100
 	wg := sync.WaitGroup{}
 	wg.Add(runs)
@@ -38,7 +38,7 @@ func TestRedisLocker(t *testing.T) {
 			require.NoError(t, err)
 			defer ulock.Unlock()
 
-			val += 1
+			val += 1 // would fail without lock since -race is used for testing
 		}()
 	}
 	wg.Wait()
