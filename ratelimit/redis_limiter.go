@@ -35,7 +35,7 @@ type redisLimiter struct {
 func (l *redisLimiter) Allow(ctx context.Context) (time.Duration, error) {
 	r, err := l.limiter.Allow(ctx, l.key, redisrate.Limit{
 		Rate:   l.rate,
-		Burst:  l.rate,
+		Burst:  1,
 		Period: l.period,
 	})
 	if err != nil {
