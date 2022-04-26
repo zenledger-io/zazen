@@ -1,10 +1,10 @@
-package redis
+package lock
 
 import (
 	"context"
 	"github.com/go-redis/redis/v8"
 	"github.com/stretchr/testify/require"
-	"github.com/zenledger-io/go-utils/lock"
+	"github.com/zenledger-io/go-utils/internal/testing/config"
 	"os"
 	"sync"
 	"testing"
@@ -15,23 +15,18 @@ func TestRedisLocker(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
 	defer cancel()
 
-	defer func(dur time.Duration) {
-		lock.DefaultRetryRandMax = dur
-	}(lock.DefaultRetryRandMax)
-	lock.DefaultRetryRandMax = 500 * time.Nanosecond
-
 	radd := os.Getenv("REDIS_ADDR")
-	opts := redis.Options{Addr: radd}
+	opts := redis.Options{Addr: radd, DB: config.LockRedisDB}
 	rc := redis.NewClient(&opts)
 	defer rc.Close()
 
 	var val int
-	lopts := lock.Options{
+	lopts := Options{
 		MaxRetry:    10,
-		RetryDurMin: 1 * time.Millisecond,
-		RetryDurMax: 20 * time.Millisecond,
+		RetryDurMin: 10 * time.Millisecond,
+		RetryDurMax: 50 * time.Millisecond,
 	}
-	locker := lock.NewRedisLocker(rc, "testkey", 3*time.Second, &lopts)
+	locker := NewRedisLocker(rc, "testkey", 3*time.Second, &lopts)
 	runs := 100
 	wg := sync.WaitGroup{}
 	wg.Add(runs)

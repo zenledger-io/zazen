@@ -9,10 +9,6 @@ import (
 	lock "github.com/bsm/redislock"
 )
 
-var (
-	DefaultRetryRandMax = 1 * time.Millisecond
-)
-
 func NewRedisLocker(c lock.RedisClient, key string, ttl time.Duration, opts *Options) Locker {
 	opts.SetDefaults()
 
@@ -38,7 +34,6 @@ func (l *redisLocker) Lock(ctx context.Context) (Unlocker, error) {
 		strategy = lock.LimitRetry(strategy, l.opts.MaxRetry)
 		lockOpts = &lock.Options{
 			RetryStrategy: &randomizedRetry{
-				MaxRand:       l.opts.RetryRandMax,
 				RetryStrategy: strategy,
 			},
 		}
@@ -60,13 +55,16 @@ func (l redisUnlocker) Unlock() error {
 }
 
 type randomizedRetry struct {
-	MaxRand time.Duration
 	lock.RetryStrategy
 }
 
 func (rr *randomizedRetry) NextBackoff() time.Duration {
 	dur := rr.RetryStrategy.NextBackoff()
-	rFactor := float64(rr.MaxRand) * rand.Float64()
-	dur += time.Duration(math.Round(rFactor))
+	if dur <= 0 {
+		return dur
+	}
+
+	rFactor := float64(dur) * rand.Float64() * 0.5
+	dur -= time.Duration(math.Round(rFactor))
 	return dur
 }
