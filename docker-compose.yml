@@ -6,4 +6,16 @@ services:
     volumes:
       - .:/go/src/github.com/zenledger-io/go-utils
     working_dir: /go/src/github.com/zenledger-io/go-utils
+    environment:
+      - REDIS_ADDR=redis:6379
     command: sh -c "go test -coverprofile=cover.out ./... -race && go tool cover -html=cover.out -o cover.html"
+    depends_on:
+      redis:
+        condition: service_healthy
+
+  redis:
+    image: redis:alpine
+    expose:
+      - "6379"
+    healthcheck:
+      test: ["CMD", "redis-cli","ping"]

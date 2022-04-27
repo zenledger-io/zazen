@@ -4,7 +4,10 @@ go 1.18
 
 require (
 	github.com/DataDog/datadog-go v4.8.2+incompatible
+	github.com/bsm/redislock v0.7.2
 	github.com/go-chi/chi/v5 v5.0.7
+	github.com/go-redis/redis/v8 v8.11.5
+	github.com/go-redis/redis_rate/v9 v9.1.2
 	github.com/honeybadger-io/honeybadger-go v0.5.0
 	github.com/stretchr/testify v1.7.0
 	go.uber.org/zap v1.21.0
@@ -20,6 +23,7 @@ require (
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/dgraph-io/ristretto v0.1.0 // indirect
+	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
 	github.com/dustin/go-humanize v1.0.0 // indirect
 	github.com/go-ole/go-ole v1.2.5 // indirect
 	github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b // indirect
