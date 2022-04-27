@@ -13,7 +13,6 @@ services:
       redis:
         condition: service_healthy
 
-
   redis:
     image: redis:alpine
     expose:
