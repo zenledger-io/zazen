@@ -10,8 +10,6 @@ import (
 )
 
 func NewRedisLocker(c lock.RedisClient, key string, ttl time.Duration, opts *Options) Locker {
-	opts.SetDefaults()
-
 	return &redisLocker{
 		lc:   lock.New(c),
 		key:  key,
