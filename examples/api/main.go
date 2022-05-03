@@ -2,8 +2,10 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"net"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/go-chi/chi/v5"
@@ -34,7 +36,7 @@ var birds = []bird{
 func main() {
 	l, err := zap.NewDevelopment()
 	if err != nil {
-		panic(err)
+		failf("failed to create service: %v\n", err)
 	}
 
 	defer l.Sync()
@@ -56,12 +58,12 @@ func main() {
 		},
 	})
 	if err != nil {
-		panic(err)
+		failf("failed to create service: %v\n", err)
 	}
 
 	defer func() {
 		if err := svc.Shutdown(context.Background()); err != nil {
-			panic(err)
+			failf("failed to shutdown service: %v", err)
 		}
 	}()
 
@@ -96,4 +98,9 @@ func v1Handler() http.Handler {
 	})
 
 	return r
+}
+
+func failf(msgFmt string, err error) {
+	fmt.Printf(msgFmt, err)
+	os.Exit(1)
 }
