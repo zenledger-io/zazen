@@ -1,16 +1,24 @@
 package main
 
 import (
+	"context"
+	"net"
 	"net/http"
 	"time"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/zenledger-io/zazen/httpx"
-	"github.com/zenledger-io/zazen/logger"
 	"go.uber.org/zap"
+
+	"github.com/zenledger-io/zazen/httpx"
+	"github.com/zenledger-io/zazen/service"
+	"github.com/zenledger-io/zazen/telemetry"
 )
 
-const addr = ":8111"
+const (
+	serviceName    = "the-birds"
+	serviceVersion = "0.0.1"
+	addr           = ":8111"
+)
 
 type bird struct {
 	Name string `json:"name"`
@@ -31,29 +39,61 @@ func main() {
 
 	defer l.Sync()
 
-	l.Info("listening", zap.String("addr", addr))
+	ctx := telemetry.ContextWithLog(context.Background(), telemetry.NewZapLog(l))
 
-	http.ListenAndServe(addr, httpx.NewAPIRouter(httpx.APIRouterConfig{
-		APIRouters:  newAPIMap(),
-		ServiceName: "birds",
-		Logger:      l,
-	}))
+	svc, err := service.New(ctx, service.Config{
+		Name:         serviceName,
+		BuildVersion: serviceVersion,
+		BuildHash:    "abc111",
+		TracerProviderConfig: telemetry.TracerProviderConfig{
+			ServiceName:    serviceName,
+			ServiceVersion: serviceVersion,
+			// To see traces, uncomment the following line
+			// TargetWriter: os.Stderr,
+		},
+		Mounts: map[string]http.Handler{
+			"/v1": v1Handler(),
+		},
+	})
+	if err != nil {
+		panic(err)
+	}
+
+	defer func() {
+		if err := svc.Shutdown(context.Background()); err != nil {
+			panic(err)
+		}
+	}()
+
+	server := &http.Server{
+		Addr:    addr,
+		Handler: svc.Handler(),
+		BaseContext: func(net.Listener) context.Context {
+			return ctx
+		},
+	}
+
+	l.Info("listening", zap.String("addr", addr))
+	server.ListenAndServe()
 }
 
-func newAPIMap() map[int]chi.Router {
+func v1Handler() http.Handler {
 	r := chi.NewRouter()
 
 	r.Get("/birds", func(w http.ResponseWriter, r *http.Request) {
-		l := logger.FromContext(r.Context())
+		span := telemetry.SpanFromContext(r.Context())
+		span.Debug("inside birds handler")
 
-		l.Info("birds handler")
 		time.Sleep(100 * time.Millisecond)
-		httpx.NewResponseOK(birds).Write(r.Context(), w)
+
+		httpx.WriteJSON(r.Context(), w, httpx.Response{
+			Payload: birds,
+		})
 	})
 
 	r.Get("/boom", func(w http.ResponseWriter, r *http.Request) {
 		panic("boom")
 	})
 
-	return map[int]chi.Router{1: r}
+	return r
 }

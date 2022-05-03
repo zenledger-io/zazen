@@ -1,16 +1,7 @@
 package httpx
 
 import (
-	"context"
-	"encoding/json"
 	"net/http"
-
-	"github.com/zenledger-io/zazen/logger"
-	"go.uber.org/zap"
-)
-
-const (
-	jsonContentType = "application/json; charset=utf-8"
 )
 
 // Response is a JSON-serializable HTTP response.
@@ -23,24 +14,15 @@ type Response struct {
 	StatusCode int
 }
 
-// NewResponseOK creates a new Response for a payload
-// with HTTP 200 as the status code.
-func NewResponseOK(payload interface{}) *Response {
-	return &Response{
-		Payload:    payload,
-		StatusCode: http.StatusOK,
+// GetStatusCode returns the status code for the response.
+func (r Response) GetStatusCode() int {
+	if r.StatusCode <= 0 {
+		return http.StatusOK
 	}
+	return r.StatusCode
 }
 
-// Write writes a response to an http.ResponseWriter.
-// Any errors encountered will be automatically handled.
-func (r *Response) Write(ctx context.Context, w http.ResponseWriter) {
-	l := logger.FromContext(ctx)
-
-	w.Header().Set("Content-Type", jsonContentType)
-	w.WriteHeader(r.StatusCode)
-
-	if err := json.NewEncoder(w).Encode(r.Payload); err != nil {
-		l.Error("json encode response", zap.Error(err))
-	}
+// GetPayload returns the payload for the response.
+func (r Response) GetPayload() any {
+	return r.Payload
 }

@@ -14,13 +14,13 @@ import (
 func TestError(t *testing.T) {
 	cases := []struct {
 		Desc       string
-		Error      *Error
+		Error      Error
 		StatusCode int
 		Resp       errorResponse
 	}{
 		{
 			Desc:       "empty values",
-			Error:      &Error{},
+			Error:      Error{},
 			StatusCode: http.StatusInternalServerError,
 			Resp: errorResponse{
 				Message: http.StatusText(http.StatusInternalServerError),
@@ -28,7 +28,7 @@ func TestError(t *testing.T) {
 		},
 		{
 			Desc: "empty values with status code",
-			Error: &Error{
+			Error: Error{
 				StatusCode: http.StatusTeapot,
 			},
 			StatusCode: http.StatusTeapot,
@@ -38,7 +38,7 @@ func TestError(t *testing.T) {
 		},
 		{
 			Desc: "only err",
-			Error: &Error{
+			Error: Error{
 				Err:        errors.New("err 111"),
 				StatusCode: http.StatusTeapot,
 			},
@@ -49,7 +49,7 @@ func TestError(t *testing.T) {
 		},
 		{
 			Desc: "only message",
-			Error: &Error{
+			Error: Error{
 				Message:    "msg 111",
 				StatusCode: http.StatusTeapot,
 			},
@@ -60,7 +60,7 @@ func TestError(t *testing.T) {
 		},
 		{
 			Desc: "err and message",
-			Error: &Error{
+			Error: Error{
 				Message:    "msg 111",
 				Err:        errors.New("err 111"),
 				StatusCode: http.StatusTeapot,
@@ -77,7 +77,7 @@ func TestError(t *testing.T) {
 		t.Run(c.Desc, func(t *testing.T) {
 			w := httptest.NewRecorder()
 
-			c.Error.Write(context.TODO(), w)
+			WriteJSON(context.TODO(), w, c.Error)
 
 			res := w.Result()
 			defer res.Body.Close()

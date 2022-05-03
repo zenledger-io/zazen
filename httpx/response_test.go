@@ -12,22 +12,22 @@ import (
 func TestResponse(t *testing.T) {
 	cases := []struct {
 		Desc       string
-		Response   *Response
+		Response   Response
 		StatusCode int
 	}{
 		{
 			Desc:       "empty payload",
-			Response:   NewResponseOK(nil),
+			Response:   Response{},
 			StatusCode: http.StatusOK,
 		},
 		{
 			Desc:       "non-empty payload",
-			Response:   NewResponseOK("111"),
+			Response:   Response{Payload: "111"},
 			StatusCode: http.StatusOK,
 		},
 		{
 			Desc: "non-empty payload and status code",
-			Response: &Response{
+			Response: Response{
 				Payload:    "111",
 				StatusCode: http.StatusTeapot,
 			},
@@ -40,7 +40,7 @@ func TestResponse(t *testing.T) {
 		t.Run(c.Desc, func(t *testing.T) {
 			w := httptest.NewRecorder()
 
-			c.Response.Write(context.TODO(), w)
+			WriteJSON(context.TODO(), w, c.Response)
 
 			res := w.Result()
 			defer res.Body.Close()
