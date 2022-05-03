@@ -4,6 +4,8 @@ import (
 	"context"
 	"encoding/json"
 	"net/http"
+
+	"github.com/zenledger-io/zazen/telemetry"
 )
 
 const (
@@ -24,6 +26,6 @@ func WriteJSON(ctx context.Context, w http.ResponseWriter, ww Writeable) {
 	w.WriteHeader(ww.GetStatusCode())
 
 	if err := json.NewEncoder(w).Encode(ww.GetPayload()); err != nil {
-		// log error
+		telemetry.SpanFromContext(ctx).Error("WriteJSON", err)
 	}
 }
