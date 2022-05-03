@@ -3,6 +3,7 @@ package telemetry
 import (
 	"context"
 
+	"go.opentelemetry.io/otel/codes"
 	"go.opentelemetry.io/otel/trace"
 )
 
@@ -41,4 +42,5 @@ func (s *span) Info(message string, fields ...Field) {
 func (s *span) Error(message string, err error, fields ...Field) {
 	s.log.Error(s.ctx, message, err, fields...)
 	s.Span.RecordError(err)
+	s.Span.SetStatus(codes.Error, err.Error())
 }
