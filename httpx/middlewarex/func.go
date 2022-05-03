@@ -1,5 +1,5 @@
-package middlewarex
+package middleware
 
 import "net/http"
 
-type Func func(server http.Handler) http.Handler
+type Func func(server http.HandlerFunc) http.HandlerFunc
