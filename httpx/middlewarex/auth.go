@@ -18,11 +18,9 @@ var (
 
 type contextKey string
 
-type Func func(server http.HandlerFunc) http.HandlerFunc
-
 func Auth(cfg AuthConfig) Func {
-	return func(next http.HandlerFunc) http.HandlerFunc {
-		return func(w http.ResponseWriter, r *http.Request) {
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			token, ok := cfg.Token(r)
 			if ok && cfg.Authorize(token) {
 				next(w, AuthorizeRequest(r))
@@ -32,7 +30,7 @@ func Auth(cfg AuthConfig) Func {
 				statusCode := http.StatusUnauthorized
 				http.Error(w, http.StatusText(statusCode), statusCode)
 			}
-		}
+		})
 	}
 }
 
