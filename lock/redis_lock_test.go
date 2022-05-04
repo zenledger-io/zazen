@@ -4,7 +4,7 @@ import (
 	"context"
 	"github.com/go-redis/redis/v8"
 	"github.com/stretchr/testify/require"
-	"github.com/zenledger-io/go-utils/internal/testing/config"
+	"github.com/zenledger-io/zazen/internal/testing/config"
 	"os"
 	"sync"
 	"testing"
