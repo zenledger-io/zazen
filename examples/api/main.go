@@ -44,14 +44,13 @@ func main() {
 	ctx := telemetry.ContextWithLog(context.Background(), telemetry.NewZapLog(l))
 
 	svc, err := service.New(ctx, service.Config{
-		Name:         serviceName,
-		BuildVersion: serviceVersion,
-		BuildHash:    "abc111",
+		TelemetryConfig: telemetry.Config{
+			Name:         serviceName,
+			BuildVersion: serviceVersion,
+			BuildHash:    "abc111",
+		},
 		TracerProviderConfig: telemetry.TracerProviderConfig{
-			ServiceName:    serviceName,
-			ServiceVersion: serviceVersion,
-			// To see traces, uncomment the following line
-			// TargetWriter: os.Stderr,
+			TargetWriter: os.Stderr,
 		},
 		Mounts: map[string]http.Handler{
 			"/v1": v1Handler(),

@@ -6,6 +6,7 @@ import (
 	"io"
 	"io/ioutil"
 
+	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc"
 	"go.opentelemetry.io/otel/exporters/stdout/stdouttrace"
 	"go.opentelemetry.io/otel/sdk/resource"
@@ -17,12 +18,6 @@ import (
 
 // TracerProviderConfig is configuration for a trace provider.
 type TracerProviderConfig struct {
-	// ServiceName is the nane of the OTEL resource designating the service.
-	ServiceName string
-
-	// ServiceVersion is the version of the OTEL resource designative the service.
-	ServiceVersion string
-
 	// TargetAddr is the address of the OTLP collector to which traces are sent. If this
 	// value is not set, NewTraceProvider will write to Writer.
 	TargetAddr string
@@ -40,20 +35,21 @@ type TracerProviderConfig struct {
 }
 
 // NewTracerProvider creates a new OTEL trace provider.
-func NewTracerProvider(ctx context.Context, cfg TracerProviderConfig) (*sdktrace.TracerProvider, error) {
+func NewTracerProvider(ctx context.Context, cfg Config, tpCfg TracerProviderConfig) (*sdktrace.TracerProvider, error) {
 	res, err := resource.New(ctx, resource.WithAttributes(
-		semconv.ServiceNameKey.String(cfg.ServiceName),
-		semconv.ServiceVersionKey.String(cfg.ServiceVersion),
+		semconv.ServiceNameKey.String(cfg.Name),
+		semconv.ServiceVersionKey.String(cfg.BuildVersion),
+		attribute.Key("service.hash").String(cfg.BuildVersion),
 	))
 	if err != nil {
 		return nil, fmt.Errorf("new resource: %w", err)
 	}
 
 	var exporter sdktrace.SpanExporter
-	if cfg.TargetAddr == "" {
-		exporter, err = newExporterStdout(cfg)
+	if tpCfg.TargetAddr == "" {
+		exporter, err = newExporterStdout(tpCfg)
 	} else {
-		exporter, err = newExporterGRPC(ctx, cfg)
+		exporter, err = newExporterGRPC(ctx, tpCfg)
 	}
 	if err != nil {
 		return nil, fmt.Errorf("new exporter: %w", err)
@@ -62,7 +58,7 @@ func NewTracerProvider(ctx context.Context, cfg TracerProviderConfig) (*sdktrace
 	return sdktrace.NewTracerProvider(
 		sdktrace.WithResource(res),
 		sdktrace.WithBatcher(exporter),
-		sdktrace.WithSampler(cfg.Sampler)), nil
+		sdktrace.WithSampler(tpCfg.Sampler)), nil
 }
 
 func newExporterGRPC(ctx context.Context, cfg TracerProviderConfig) (sdktrace.SpanExporter, error) {

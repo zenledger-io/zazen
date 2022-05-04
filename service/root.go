@@ -29,11 +29,11 @@ func newRoot(tp trace.TracerProvider, cfg Config) http.Handler {
 	root.Use(middleware.RealIP)
 	root.Use(middleware.RequestID)
 
-	root.Use(otelchi.Middleware(cfg.Name,
+	root.Use(otelchi.Middleware(cfg.TelemetryConfig.Name,
 		otelchi.WithTracerProvider(tp)))
 	root.Use(telemetry.RecoverMiddleware)
 
-	root.Get("/status", newStatusHandler(cfg))
+	root.Get("/status", newStatusHandler(cfg.TelemetryConfig))
 	for p, h := range cfg.Mounts {
 		root.Mount(p, h)
 	}
@@ -41,15 +41,15 @@ func newRoot(tp trace.TracerProvider, cfg Config) http.Handler {
 	return root
 }
 
-func newStatusHandler(cfg Config) http.HandlerFunc {
+func newStatusHandler(telCfg telemetry.Config) http.HandlerFunc {
 	type response struct {
 		Version string `json:"version"`
 		Hash    string `json:"hash"`
 	}
 
 	payload := response{
-		Version: cfg.BuildVersion,
-		Hash:    cfg.BuildHash,
+		Version: telCfg.BuildVersion,
+		Hash:    telCfg.BuildHash,
 	}
 
 	return func(w http.ResponseWriter, r *http.Request) {

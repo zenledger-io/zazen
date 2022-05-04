@@ -13,16 +13,9 @@ import (
 
 // Config is configuration for a Service.
 type Config struct {
-	// BuildVersion is a SemVer string indicating
-	// the version of the app hosting this service.
-	BuildVersion string
-
-	// BuildHash is the commit hash of the app hosting
-	// this service.
-	BuildHash string
-
-	// Name is the name of the service
-	Name string
+	// TelemetryConfig is the configuration that will be used
+	// to instrument this service.
+	TelemetryConfig telemetry.Config
 
 	// RequestTimeout is the maximum amount of time allowed
 	// for a request on the router before processing is stopped.
@@ -39,7 +32,7 @@ type Config struct {
 
 // New creates a new Service.
 func New(ctx context.Context, cfg Config) (*Service, error) {
-	tp, err := telemetry.NewTracerProvider(ctx, cfg.TracerProviderConfig)
+	tp, err := telemetry.NewTracerProvider(ctx, cfg.TelemetryConfig, cfg.TracerProviderConfig)
 	if err != nil {
 		return nil, fmt.Errorf("new trace provider: %w", err)
 	}
@@ -47,7 +40,6 @@ func New(ctx context.Context, cfg Config) (*Service, error) {
 	root := newRoot(tp, cfg)
 
 	return &Service{
-		name: cfg.Name,
 		root: root,
 		tp:   tp,
 	}, nil
@@ -56,7 +48,6 @@ func New(ctx context.Context, cfg Config) (*Service, error) {
 // Service is a component used to serve versioned,
 // HTTP services that speak JSON.
 type Service struct {
-	name string
 	root http.Handler
 	tp   *sdktrace.TracerProvider
 }
