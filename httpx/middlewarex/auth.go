@@ -23,9 +23,9 @@ func Auth(cfg AuthConfig) Func {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			token, ok := cfg.Token(r)
 			if ok && cfg.Authorize(token) {
-				next(w, AuthorizeRequest(r))
+				next.ServeHTTP(w, AuthorizeRequest(r))
 			} else if cfg.Optional {
-				next(w, r)
+				next.ServeHTTP(w, r)
 			} else {
 				statusCode := http.StatusUnauthorized
 				http.Error(w, http.StatusText(statusCode), statusCode)
