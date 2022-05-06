@@ -6,9 +6,9 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
-	"github.com/riandyrn/otelchi"
 	"go.opentelemetry.io/otel/trace"
 
+	"github.com/zenledger-io/otelchi"
 	"github.com/zenledger-io/zazen/httpx"
 	"github.com/zenledger-io/zazen/telemetry"
 )
@@ -29,8 +29,9 @@ func newRoot(tp trace.TracerProvider, cfg Config) http.Handler {
 	root.Use(middleware.RealIP)
 	root.Use(middleware.RequestID)
 
+	tracer := tp.Tracer("zazen.service")
 	root.Use(otelchi.Middleware(cfg.TelemetryConfig.Name,
-		otelchi.WithTracerProvider(tp)))
+		otelchi.WithTracer(tracer)))
 	root.Use(telemetry.RecoverMiddleware)
 
 	root.Get("/status", newStatusHandler(cfg.TelemetryConfig))

@@ -7,9 +7,9 @@ require (
 	github.com/go-chi/chi/v5 v5.0.7
 	github.com/go-redis/redis/v8 v8.11.5
 	github.com/go-redis/redis_rate/v9 v9.1.2
-	github.com/riandyrn/otelchi v0.4.0
 	github.com/stretchr/testify v1.7.1
 	github.com/uptrace/opentelemetry-go-extra/otelzap v0.1.12
+	github.com/zenledger-io/otelchi v0.4.1-0.20220506023654-4f880f6e8654
 	go.opentelemetry.io/otel v1.7.0
 	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.7.0
 	go.opentelemetry.io/otel/exporters/stdout/stdouttrace v1.7.0
@@ -31,7 +31,7 @@ require (
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.7.0 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/uptrace/opentelemetry-go-extra/otelutil v0.1.12 // indirect
-	go.opentelemetry.io/contrib v1.0.0 // indirect
+	go.opentelemetry.io/contrib v1.7.0 // indirect
 	go.opentelemetry.io/otel/exporters/otlp/internal/retry v1.7.0 // indirect
 	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.7.0 // indirect
 	go.opentelemetry.io/proto/otlp v0.16.0 // indirect
