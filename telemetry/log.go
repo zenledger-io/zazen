@@ -4,10 +4,6 @@ import (
 	"context"
 )
 
-type ctxKey int
-
-const logCtxKey ctxKey = iota
-
 // Field is a structured logging field..
 type Field struct {
 	Name  string
