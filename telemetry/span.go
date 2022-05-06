@@ -7,11 +7,24 @@ import (
 	"go.opentelemetry.io/otel/trace"
 )
 
-// SpanFromContext returns new Span based on values
+// SpanFromContext returns the existing Span based on values
 // carrioed in ctx.
 func SpanFromContext(ctx context.Context) Span {
 	return &span{
 		Span: trace.SpanFromContext(ctx),
+		log:  LogFromContext(ctx),
+		ctx:  ctx,
+	}
+}
+
+// Start creates a span and a context.Context containing the newly-created span
+// using the supplied tracer and options.
+func Start(ctx context.Context, tracer trace.Tracer, name string, opts ...trace.SpanStartOption) (context.Context, Span) {
+	var span trace.Span
+	ctx, span = tracer.Start(name, opts...)
+
+	return ctx, &span{
+		Span: span,
 		log:  LogFromContext(ctx),
 		ctx:  ctx,
 	}
