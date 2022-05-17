@@ -17,6 +17,7 @@ type ShouldRetryFunc func(ctx context.Context, i int, err error) bool
 
 type Config struct {
 	ShouldRetry   ShouldRetryFunc
+	ResetCount    func(time.Duration) int
 	Wait          time.Duration
 	MaxWait       time.Duration
 	BackOffFactor float64
