@@ -15,7 +15,7 @@ func Do(ctx context.Context, cfg Config, f func(context.Context) error) (int, er
 
 		if err := f(ctx); err != nil {
 			if cfg.ResetCount != nil {
-				i = cfg.ResetCount(time.Since(lastErrorAt))
+				i = cfg.ResetCount(i, time.Since(lastErrorAt))
 				lastErrorAt = time.Now()
 			}
 
