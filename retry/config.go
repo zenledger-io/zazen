@@ -13,11 +13,9 @@ var (
 	DefaultRandomFactor  = 0.2
 )
 
-type ShouldRetryFunc func(ctx context.Context, i int, err error) bool
-
 type Config struct {
 	ShouldRetry   ShouldRetryFunc
-	ResetCount    func(int, time.Duration) int
+	ResetCount    ResetCountFunc
 	Wait          time.Duration
 	MaxWait       time.Duration
 	BackOffFactor float64
@@ -71,14 +69,4 @@ func (cfg Config) Sleep(ctx context.Context, i int) {
 
 func (cfg Config) Do(ctx context.Context, f func(context.Context) error) (int, error) {
 	return Do(ctx, cfg, f)
-}
-
-func ResetCountAfter(dur time.Duration) func(int, time.Duration) int {
-	return func(i int, sinceLast time.Duration) int {
-		if sinceLast >= dur {
-			return 0
-		}
-
-		return i
-	}
 }
