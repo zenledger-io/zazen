@@ -1,12 +1,8 @@
 package httpx
 
 import (
-	"context"
-	"encoding/json"
 	"fmt"
 	"net/http"
-
-	"github.com/zenledger-io/zazen/observe"
 )
 
 // Error is a JSON-serializable HTTP error.
@@ -28,27 +24,18 @@ type Error struct {
 	StatusCode int
 }
 
-// errorResponse is an error response.
-type errorResponse struct {
-	Message string `json:"message"`
+// GetStatusCode returns the status code for the error.
+func (e Error) GetStatusCode() int {
+	if e.StatusCode <= 0 {
+		return http.StatusInternalServerError
+	}
+	return e.StatusCode
 }
 
-// Write observes the values of the error and writes it to the http.Writer.
-func (e *Error) Write(ctx context.Context, w http.ResponseWriter) {
-	obs := observe.FromContext(ctx)
-
-	defer obs.Error(ctx, e.Message, e.Err)
-
-	w.Header().Set("Content-Type", jsonContentType)
-
-	code := e.StatusCode
-	if code <= 0 {
-		code = http.StatusInternalServerError
-	}
-	w.WriteHeader(code)
-
+// GetPayload returns the payload for the error.
+func (e Error) GetPayload() any {
 	r := errorResponse{
-		Message: http.StatusText(code),
+		Message: http.StatusText(e.GetStatusCode()),
 	}
 
 	if e.Err != nil && e.Message != "" {
@@ -59,7 +46,9 @@ func (e *Error) Write(ctx context.Context, w http.ResponseWriter) {
 		r.Message = e.Message
 	}
 
-	if err := json.NewEncoder(w).Encode(&r); err != nil {
-		obs.Error(ctx, "json encode error response", err)
-	}
+	return &r
+}
+
+type errorResponse struct {
+	Message string `json:"message"`
 }

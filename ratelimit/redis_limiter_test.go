@@ -2,14 +2,15 @@ package ratelimit
 
 import (
 	"context"
-	"github.com/go-redis/redis/v8"
-	"github.com/stretchr/testify/require"
-	"github.com/zenledger-io/zazen/internal/testing/config"
 	"os"
 	"sync"
 	"sync/atomic"
 	"testing"
 	"time"
+
+	"github.com/go-redis/redis/v8"
+	"github.com/stretchr/testify/require"
+	"github.com/zenledger-io/zazen/internal/testing/config"
 )
 
 func TestRedisLimiter_Allow(t *testing.T) {
