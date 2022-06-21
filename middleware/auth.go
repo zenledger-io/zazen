@@ -1,4 +1,4 @@
-package middlewarex
+package middleware
 
 import (
 	"context"
@@ -12,25 +12,19 @@ type AuthConfig struct {
 	Optional bool
 }
 
-var (
-	authContextKey contextKey = "auth"
-)
-
-type contextKey string
-
 func Auth(cfg AuthConfig) Func {
-	return func(next http.Handler) http.Handler {
-		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	return func(next http.HandlerFunc) http.HandlerFunc {
+		return func(w http.ResponseWriter, r *http.Request) {
 			token, ok := cfg.Token(r)
 			if ok && cfg.Authorize(token) {
-				next.ServeHTTP(w, AuthorizeRequest(r))
+				next(w, AuthorizeRequest(r))
 			} else if cfg.Optional {
-				next.ServeHTTP(w, r)
+				next(w, r)
 			} else {
 				statusCode := http.StatusUnauthorized
 				http.Error(w, http.StatusText(statusCode), statusCode)
 			}
-		})
+		}
 	}
 }
 
@@ -73,7 +67,6 @@ func NewTokenAuthorizer(tokens ...string) Authorizer {
 	for _, token := range tokens {
 		tokenMap[strings.TrimSpace(token)] = struct{}{}
 	}
-
 	return tokenAuthorizer{tokens: tokenMap}
 }
 
@@ -85,7 +78,6 @@ func (a tokenAuthorizer) Authorize(token string) bool {
 	if token == "" {
 		return false
 	}
-
 	_, ok := a.tokens[token]
 	return ok
 }
@@ -104,7 +96,6 @@ func NewHeaderAuthProvider(key, prefix string) AuthProvider {
 		Prefix: prefix,
 	}
 }
-
 func NewAuthorizationHeaderAuthProvider() AuthProvider {
 	return NewHeaderAuthProvider("Authorization", "")
 }
@@ -119,12 +110,10 @@ func (p HeaderAuthProvider) Token(r *http.Request) (string, bool) {
 	if !ok || len(headers) == 0 {
 		return "", false
 	}
-
 	header := headers[0]
 	if p.Prefix != "" {
 		header = strings.TrimPrefix(header, p.Prefix)
 		header = strings.TrimSpace(header)
 	}
-
 	return header, true
 }

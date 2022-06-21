@@ -1,4 +1,4 @@
-package httpx
+package httputils
 
 import (
 	"encoding/json"
