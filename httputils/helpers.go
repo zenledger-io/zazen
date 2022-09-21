@@ -8,17 +8,21 @@ import (
 )
 
 var (
-	JSONContentType = "application/json; charset=utf-8"
+	JsonContentType = "application/json; charset=utf-8"
 )
 
-func SendJSON[T any](w http.ResponseWriter, t T) error {
-	w.Header().Set("Content-Type", JSONContentType)
+func SendJson[T any](w http.ResponseWriter, statusCode int, t T) error {
+	w.Header().Set("Content-Type", JsonContentType)
+	w.WriteHeader(statusCode)
 	return json.NewEncoder(w).Encode(t)
 }
 
-func SendError[T any](ctx context.Context, statusCode int, w http.ResponseWriter, t T) {
-	w.WriteHeader(statusCode)
-	if err := SendJSON(w, t); err != nil {
+func SendJsonOk[T any](w http.ResponseWriter, t T) error {
+	return SendJson(w, http.StatusOK, t)
+}
+
+func SendJsonError[T any](ctx context.Context, w http.ResponseWriter, statusCode int, t T) {
+	if err := SendJson(w, statusCode, t); err != nil {
 		log.ContextLogger(ctx).Errorf("unable to send json: %v", err)
 	}
 }
