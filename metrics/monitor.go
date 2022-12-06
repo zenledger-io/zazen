@@ -3,11 +3,13 @@ package metrics
 import (
 	"context"
 	"fmt"
+	"net/http"
 )
 
 type Monitor interface {
 	Start(context.Context) error
 	StartTransaction(ctx context.Context, name string) (Transaction, context.Context)
+	WrapHandleFunc(h http.HandlerFunc) http.HandlerFunc
 }
 
 func Start(ctx context.Context) (context.Context, error) {
