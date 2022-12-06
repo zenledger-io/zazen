@@ -2,6 +2,7 @@ package metrics
 
 import (
 	"context"
+	"net/http"
 )
 
 // Monitor
@@ -18,6 +19,10 @@ func (m nullMonitor) Start(context.Context) error {
 
 func (m nullMonitor) StartTransaction(ctx context.Context, name string) (Transaction, context.Context) {
 	return nullTransaction{}, ctx
+}
+
+func (m nullMonitor) WrapHandleFunc(h http.HandlerFunc) http.HandlerFunc {
+	return h
 }
 
 // Transaction

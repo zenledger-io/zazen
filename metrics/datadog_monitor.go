@@ -5,6 +5,7 @@ import (
 	"github.com/DataDog/datadog-go/statsd"
 	"gopkg.in/DataDog/dd-trace-go.v1/ddtrace"
 	"gopkg.in/DataDog/dd-trace-go.v1/ddtrace/tracer"
+	"net/http"
 )
 
 var (
@@ -38,6 +39,15 @@ func (m *datadogMonitor) Start(ctx context.Context) error {
 
 func (m *datadogMonitor) StartTransaction(ctx context.Context, name string) (Transaction, context.Context) {
 	return NewDatadogTransaction(ctx, name)
+}
+
+func (m *datadogMonitor) WrapHandleFunc(h http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		tx, ctx := NewDatadogTransaction(r.Context(), r.URL.Path)
+		defer tx.End()
+
+		h.ServeHTTP(w, r.WithContext(ctx))
+	}
 }
 
 // Transaction
