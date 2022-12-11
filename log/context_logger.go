@@ -3,6 +3,7 @@ package log
 import (
 	"context"
 	"fmt"
+	"go.uber.org/zap"
 )
 
 func ContextLogger(ctx context.Context) Logger {
@@ -14,11 +15,11 @@ type contextLogger struct {
 }
 
 func (l contextLogger) Printf(format string, args ...interface{}) {
-	l.logToFunc(Printf, format, args)
+	l.logToFunc(zapLogger.Info, format, args)
 }
 
 func (l contextLogger) Errorf(format string, args ...interface{}) {
-	l.logToFunc(Errorf, format, args)
+	l.logToFunc(zapLogger.Error, format, args)
 }
 
 func (l contextLogger) Monitor() {
@@ -30,9 +31,9 @@ func (l contextLogger) Monitor() {
 	}
 }
 
-func (l contextLogger) logToFunc(f func(string, ...interface{}), format string, args []interface{}) {
+func (l contextLogger) logToFunc(f func(string, ...zap.Field), format string, args []interface{}) {
 	format, args = l.formatArgs(format, args)
-	f(format, args...)
+	f(fmt.Sprintf(format, args...))
 }
 
 func (l contextLogger) formatArgs(format string, args []interface{}) (string, []interface{}) {

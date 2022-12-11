@@ -2,17 +2,22 @@ package log
 
 import (
 	"context"
+	"go.uber.org/zap"
 	"log"
 )
 
 const (
 	DefaultFlags = log.LUTC | log.Ldate | log.Ltime | log.Lmsgprefix
 
+	LevelDebug = "debug"
+	LevelInfo = "info"
+	LevelWarn = "warn"
 	LevelError = "error"
 )
 
 var (
 	reporter = NewNoneReporter()
+	zapLogger, _ = zap.NewProduction()
 )
 
 func init() {
