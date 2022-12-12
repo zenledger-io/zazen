@@ -13,6 +13,16 @@ func NewQueue[T any]() Queue[T] {
 	}
 }
 
+// NewQueueFromSlice accepts a Slice and returns a Queue with
+// the first item in the slice at the beginning of the queue
+func NewQueueFromSlice[T any](slc []T) Queue[T] {
+	q := NewQueue[T]()
+	for _, v := range slc {
+		q.Enqueue(v)
+	}
+	return q
+}
+
 type queue[T any] struct {
 	l *LinkedList[T]
 }

@@ -85,3 +85,15 @@ func (l *LinkedList[T]) Reverse() {
 		cur = nxt
 	}
 }
+
+func (l *LinkedList[T]) ToStack() Stack[T] {
+	return &stack[T]{
+		l: l,
+	}
+}
+
+func (l *LinkedList[T]) ToQueue() Queue[T] {
+	return &queue[T]{
+		l: l,
+	}
+}
