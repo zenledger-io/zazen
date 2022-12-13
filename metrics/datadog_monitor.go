@@ -11,6 +11,7 @@ import (
 var (
 	MonitorType      string
 	DatadogDebugMode bool
+	Addr             string
 )
 
 type datadogMonitor struct{}
@@ -22,7 +23,7 @@ func NewDatadogMonitor() Monitor {
 // Start starts the datadog client and tracer. Make sure the
 // DD_AGENT_HOST env variable is set.
 func (m *datadogMonitor) Start(ctx context.Context) error {
-	client, err := statsd.New("")
+	client, err := statsd.New(Addr)
 	if err != nil {
 		return err
 	}
