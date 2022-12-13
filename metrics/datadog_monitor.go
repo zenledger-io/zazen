@@ -74,11 +74,11 @@ func (t *datadogTransaction) End() {
 	t.span.Finish(t.finishOptions...)
 }
 
-func (t *datadogTransaction) AddAttribute(key string, value interface{}) {
+func (t *datadogTransaction) AddAttribute(key string, value any) {
 	t.span.SetTag(key, value)
 }
 
-func (t *datadogTransaction) AddAttributes(attrs map[string]interface{}) {
+func (t *datadogTransaction) AddAttributes(attrs map[string]any) {
 	for k, v := range attrs {
 		t.AddAttribute(k, v)
 	}

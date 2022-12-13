@@ -6,8 +6,8 @@ import (
 
 type Transaction interface {
 	End()
-	AddAttribute(key string, value interface{})
-	AddAttributes(attrs map[string]interface{})
+	AddAttribute(key string, value any)
+	AddAttributes(attrs map[string]any)
 	StartTransaction(ctx context.Context, name string) (Transaction, context.Context)
 	NoticeError(err error)
 }

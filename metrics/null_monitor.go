@@ -37,8 +37,8 @@ func (t nullTransaction) StartTransaction(ctx context.Context, name string) (Tra
 
 func (t nullTransaction) End() {}
 
-func (t nullTransaction) AddAttribute(key string, value interface{}) {}
+func (t nullTransaction) AddAttribute(key string, value any) {}
 
-func (t nullTransaction) AddAttributes(attrs map[string]interface{}) {}
+func (t nullTransaction) AddAttributes(attrs map[string]any) {}
 
 func (t nullTransaction) NoticeError(err error) {}
