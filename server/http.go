@@ -53,10 +53,11 @@ func NewHTTP(endpoints []HTTPEndpoint, addr string, rTimeout, wTimeout time.Dura
 func Router(endpoints []HTTPEndpoint, defaultMiddleware ...middleware.Func) http.HandlerFunc {
 	r := mux.NewRouter()
 	for _, e := range endpoints {
-		e.Middleware = append(e.Middleware, defaultMiddleware...)
+		dmw := defaultMiddleware
 		if MetricsMiddleware != nil {
-			e.Middleware = append(e.Middleware, MetricsMiddleware(e.Path))
+			dmw = append([]middleware.Func{MetricsMiddleware(e.Path)}, dmw...)
 		}
+		e.Middleware = append(e.Middleware, dmw...)
 		r.Handle(e.Path, middleware.Wrap(e.Handler, e.Middleware...)).Methods(e.Methods...)
 	}
 
