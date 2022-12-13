@@ -21,8 +21,10 @@ func (m nullMonitor) StartTransaction(ctx context.Context, name string) (Transac
 	return nullTransaction{}, ctx
 }
 
-func (m nullMonitor) WrapHandleFunc(h http.HandlerFunc) http.HandlerFunc {
-	return h
+func (m nullMonitor) CreateWrapHandleFunc(string) func(h http.HandlerFunc) http.HandlerFunc {
+	return func(h http.HandlerFunc) http.HandlerFunc {
+		return h
+	}
 }
 
 // Transaction

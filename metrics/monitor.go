@@ -9,7 +9,7 @@ import (
 type Monitor interface {
 	Start(context.Context) error
 	StartTransaction(ctx context.Context, name string) (Transaction, context.Context)
-	WrapHandleFunc(h http.HandlerFunc) http.HandlerFunc
+	CreateWrapHandleFunc(path string) func(h http.HandlerFunc) http.HandlerFunc
 }
 
 func Start(ctx context.Context) (context.Context, error) {

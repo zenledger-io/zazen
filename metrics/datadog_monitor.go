@@ -42,12 +42,14 @@ func (m *datadogMonitor) StartTransaction(ctx context.Context, name string) (Tra
 	return NewDatadogTransaction(ctx, name)
 }
 
-func (m *datadogMonitor) WrapHandleFunc(h http.HandlerFunc) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		tx, ctx := NewDatadogTransaction(r.Context(), r.URL.Path)
-		defer tx.End()
+func (m *datadogMonitor) CreateWrapHandleFunc(path string) func(h http.HandlerFunc) http.HandlerFunc {
+	return func(h http.HandlerFunc) http.HandlerFunc {
+		return func(w http.ResponseWriter, r *http.Request) {
+			tx, ctx := NewDatadogTransaction(r.Context(), path)
+			defer tx.End()
 
-		h.ServeHTTP(w, r.WithContext(ctx))
+			h.ServeHTTP(w, r.WithContext(ctx))
+		}
 	}
 }
 
