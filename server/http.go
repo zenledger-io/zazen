@@ -60,5 +60,5 @@ func Router(endpoints []HTTPEndpoint, defaultMiddleware ...middleware.Func) http
 		r.Handle(e.Path, middleware.Wrap(e.Handler, e.Middleware...)).Methods(e.Methods...)
 	}
 
-	return middleware.Wrap(r.ServeHTTP)
+	return r.ServeHTTP
 }
