@@ -37,6 +37,10 @@ func Start(ctx context.Context) {
 	}
 }
 
+func Sync() {
+	_ = zapLogger.Sync()
+}
+
 func Debugf(format string, args ...any) {
 	zapLogger.Debug(fmt.Sprintf(format, args...))
 }
