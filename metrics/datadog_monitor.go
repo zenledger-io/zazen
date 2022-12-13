@@ -57,9 +57,9 @@ func (m *datadogMonitor) CreateWrapHandleFunc(path string) func(h http.HandlerFu
 			h.ServeHTTP(wWrapper, r.WithContext(ctx))
 
 			tx.AddAttributes(map[string]any{
-				"http.status":         wWrapper.StatusCode,
+				"http.status_code":    wWrapper.StatusCode,
 				"http.url":            r.URL.Path,
-				"http.host":           r.URL.Host,
+				"http.method":         r.Method,
 				"http.request.bytes":  bWrapper.ByteLength,
 				"http.response.bytes": wWrapper.ByteLength,
 			})
