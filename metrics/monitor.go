@@ -17,6 +17,8 @@ func Start(ctx context.Context) (context.Context, error) {
 	switch MonitorType {
 	case "datadog":
 		monitor = NewDatadogMonitor()
+	case "stdout":
+		monitor = NewStdOutMonitor()
 	default:
 		monitor = NewNullMonitor()
 	}

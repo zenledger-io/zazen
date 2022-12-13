@@ -25,10 +25,10 @@ func ContextWithTransaction(ctx context.Context, tx Transaction) context.Context
 	return context.WithValue(ctx, txKey, tx)
 }
 
-func ContextTransaction(ctx context.Context) Transaction {
+func ContextTransaction(ctx context.Context) (Transaction, bool) {
 	if tx, ok := ctx.Value(txKey).(Transaction); ok {
-		return tx
+		return tx, ok
 	}
 
-	return nullTransaction{}
+	return nullTransaction{}, false
 }

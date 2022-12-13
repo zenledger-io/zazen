@@ -45,7 +45,7 @@ func (r honeybadgerReporter) Start(ctx context.Context) error {
 	return nil
 }
 
-func (r honeybadgerReporter) Errorf(format string, args ...interface{}) error {
+func (r honeybadgerReporter) Errorf(format string, args ...any) error {
 	return notifyHoneybadger(LevelError, format, args...)
 }
 
@@ -53,7 +53,7 @@ func (r honeybadgerReporter) Monitor() {
 	honeybadger.Monitor()
 }
 
-func notifyHoneybadger(level, format string, args ...interface{}) error {
+func notifyHoneybadger(level, format string, args ...any) error {
 	msg := fmt.Sprintf(format, args...)
 	var notifyErr error
 
@@ -75,7 +75,7 @@ func getHoneybadgerConfig(ctx context.Context) honeybadger.Configuration {
 	}
 }
 
-func extractErrFromArgs(args []interface{}) error {
+func extractErrFromArgs(args []any) error {
 	for _, arg := range args {
 		if err, ok := arg.(error); ok {
 			return err

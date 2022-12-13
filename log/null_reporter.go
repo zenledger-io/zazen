@@ -12,7 +12,7 @@ func (r nullReporter) Start(context.Context) error {
 	return nil
 }
 
-func (r nullReporter) Errorf(string, ...interface{}) error {
+func (r nullReporter) Errorf(string, ...any) error {
 	return nil
 }
 
