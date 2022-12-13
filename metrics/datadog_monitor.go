@@ -3,6 +3,8 @@ package metrics
 import (
 	"context"
 	"github.com/DataDog/datadog-go/statsd"
+	"github.com/zenledger-io/zazen/httputils"
+	"github.com/zenledger-io/zazen/ioutils"
 	"gopkg.in/DataDog/dd-trace-go.v1/ddtrace"
 	"gopkg.in/DataDog/dd-trace-go.v1/ddtrace/tracer"
 	"net/http"
@@ -48,7 +50,19 @@ func (m *datadogMonitor) CreateWrapHandleFunc(path string) func(h http.HandlerFu
 			tx, ctx := NewDatadogTransaction(r.Context(), path)
 			defer tx.End()
 
-			h.ServeHTTP(w, r.WithContext(ctx))
+			wWrapper := httputils.NewMeasuredResponseWriter(w)
+			bWrapper := ioutils.NewMeasuredReadCloser(r.Body)
+
+			r.Body = bWrapper
+			h.ServeHTTP(wWrapper, r.WithContext(ctx))
+
+			tx.AddAttributes(map[string]any{
+				"http.status":         wWrapper.StatusCode,
+				"http.url":            r.URL.Path,
+				"http.host":           r.URL.Host,
+				"http.request.bytes":  bWrapper.ByteLength,
+				"http.response.bytes": wWrapper.ByteLength,
+			})
 		}
 	}
 }
