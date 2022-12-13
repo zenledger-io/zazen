@@ -14,6 +14,7 @@ var (
 		middleware.Logger(),
 		middleware.UUID(),
 	}
+	MetricsMiddleware func(path string) middleware.Func
 )
 
 type HTTPEndpoint struct {
@@ -52,8 +53,12 @@ func NewHTTP(endpoints []HTTPEndpoint, addr string, rTimeout, wTimeout time.Dura
 func Router(endpoints []HTTPEndpoint, defaultMiddleware ...middleware.Func) http.HandlerFunc {
 	r := mux.NewRouter()
 	for _, e := range endpoints {
+		e.Middleware = append(e.Middleware, defaultMiddleware...)
+		if MetricsMiddleware != nil {
+			e.Middleware = append(e.Middleware, MetricsMiddleware(e.Path))
+		}
 		r.Handle(e.Path, middleware.Wrap(e.Handler, e.Middleware...)).Methods(e.Methods...)
 	}
 
-	return middleware.Wrap(r.ServeHTTP, defaultMiddleware...)
+	return middleware.Wrap(r.ServeHTTP)
 }
