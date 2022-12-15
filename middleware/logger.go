@@ -22,7 +22,7 @@ func Logger() Func {
 			dur := time.Since(t)
 			log.ContextLogger(r.Context()).PrintT(
 				fmt.Sprintf("finished http request %v %v", r.Method, r.URL.Path),
-				log.NewTag("duration", dur.Microseconds()),
+				log.NewTag("duration", dur.Nanoseconds()),
 				log.NewTag("duration_formatted", fmt.Sprintf("%v", dur)),
 				log.NewTag("http.status_code", wWrapper.StatusCode),
 				log.NewTag("http.path", r.URL.Path),
