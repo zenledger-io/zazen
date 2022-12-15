@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"fmt"
 	"github.com/zenledger-io/zazen/httputils"
 	"github.com/zenledger-io/zazen/ioutils"
 	"github.com/zenledger-io/zazen/log"
@@ -19,7 +20,7 @@ func Logger() Func {
 			next.ServeHTTP(wWrapper, r)
 
 			log.ContextLogger(r.Context()).PrintT("finished http request",
-				log.NewTag("duration", time.Since(t)),
+				log.NewTag("duration", fmt.Sprintf("%v", time.Since(t))),
 				log.NewTag("http.status_code", wWrapper.StatusCode),
 				log.NewTag("http.url", r.URL.Path),
 				log.NewTag("http.method", r.Method),
