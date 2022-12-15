@@ -18,14 +18,13 @@ func Logger() Func {
 			r.Body = bWrapper
 			next.ServeHTTP(wWrapper, r)
 
-			log.ContextLogger(r.Context()).Printf("%v %v %v | %v | %v | sent %vB | received %vB",
-				wWrapper.StatusCode,
-				r.Method,
-				r.URL,
-				r.RemoteAddr,
-				time.Since(t),
-				wWrapper.ByteLength,
-				bWrapper.ByteLength)
+			log.ContextLogger(r.Context()).PrintT("finished http request",
+				log.NewTag("duration", time.Since(t)),
+				log.NewTag("http.status_code", wWrapper.StatusCode),
+				log.NewTag("http.url", r.URL.Path),
+				log.NewTag("http.method", r.Method),
+				log.NewTag("http.request.bytes", bWrapper.ByteLength),
+				log.NewTag("http.response.bytes", wWrapper.ByteLength))
 		}
 	}
 }
