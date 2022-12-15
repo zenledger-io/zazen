@@ -25,7 +25,7 @@ func Logger() Func {
 				log.NewTag("duration", dur.Nanoseconds()),
 				log.NewTag("duration_formatted", fmt.Sprintf("%v", dur)),
 				log.NewTag("http.status_code", wWrapper.StatusCode),
-				log.NewTag("http.path", r.URL.Path),
+				log.NewTag("http.url_details.path", r.URL.Path),
 				log.NewTag("http.method", r.Method),
 				log.NewTag("http.request.bytes", bWrapper.ByteLength),
 				log.NewTag("http.response.bytes", wWrapper.ByteLength))
