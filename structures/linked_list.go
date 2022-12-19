@@ -97,3 +97,11 @@ func (l *LinkedList[T]) ToQueue() Queue[T] {
 		l: l,
 	}
 }
+
+func (l *LinkedList[T]) getNode(idx int) *LinkedListNode[T] {
+	current := l.head
+	for i := 0; i < idx; i++ {
+		current = current.Next
+	}
+	return current
+}
