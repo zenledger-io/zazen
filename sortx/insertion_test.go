@@ -111,12 +111,16 @@ func BenchmarkInsert(b *testing.B) {
 
 	for desc, tc := range tcs {
 		b.Run(fmt.Sprintf("insertion sort %v", desc), func(b *testing.B) {
-			_ = Insert(tc.Slice, tc.Append, func(a, b int) bool {
-				return a < b
-			})
+			for r := 0; r < b.N; r++ {
+				_ = Insert(tc.Slice, tc.Append, func(a, b int) bool {
+					return a < b
+				})
+			}
 		})
 		b.Run(fmt.Sprintf("built in sort %v", desc), func(b *testing.B) {
-			sort.Ints(append(tc.Slice, tc.Append))
+			for r := 0; r < b.N; r++ {
+				sort.Ints(append(tc.Slice, tc.Append))
+			}
 		})
 	}
 }
