@@ -1,5 +1,6 @@
 package structures
 
+// BinaryHeap is a data structure that could speed up hifo calculations
 type BinaryHeap[T any] interface {
 	Len() int
 	Push(T)
