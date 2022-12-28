@@ -3,6 +3,7 @@ package sortx
 import (
 	"fmt"
 	"github.com/stretchr/testify/require"
+	"math/rand"
 	"sort"
 	"testing"
 )
@@ -50,7 +51,7 @@ func BenchmarkMerge(b *testing.B) {
 	createSlice := func(limit int) []int {
 		slc := make([]int, limit, limit+1)
 		for i := 0; i < limit; i++ {
-			slc[i] = i
+			slc[i] = rand.Int()
 		}
 		return slc
 	}
@@ -79,7 +80,9 @@ func BenchmarkMerge(b *testing.B) {
 		})
 		b.Run(fmt.Sprintf("built in sort %v", desc), func(b *testing.B) {
 			for r := 0; r < b.N; r++ {
-				sort.Ints(tc.Slice)
+				sort.Slice(tc.Slice, func(a, b int) bool {
+					return tc.Slice[a] < tc.Slice[b]
+				})
 			}
 		})
 	}
