@@ -103,5 +103,46 @@ func BenchmarkBinaryHeap(b *testing.B) {
 				}
 			}
 		})
+		b.Run(fmt.Sprintf("binary heap push and pop %v", desc), func(b *testing.B) {
+			for r := 0; r < b.N; r++ {
+				bh := NewBinaryHeap(func(t1 int, t2 int) int {
+					return t1 - t2
+				})
+				for j, i := range tc.Slice {
+					bh.Push(i)
+					if j%2 == 0 {
+						bh.Pop()
+					}
+				}
+				j := 0
+				for bh.Len() > 0 {
+					el := bh.Pop()
+					if j%2 == 0 {
+						bh.Push(el)
+					}
+					j += 1
+				}
+			}
+		})
+		b.Run(fmt.Sprintf("slice push and pop %v", desc), func(b *testing.B) {
+			for r := 0; r < b.N; r++ {
+				var slc []int
+				for j, i := range tc.Slice {
+					slc = append(slc, i)
+					if j%2 == 0 {
+						_, slc = shift(slc)
+					}
+				}
+				j := 0
+				for len(slc) > 0 {
+					var el int
+					el, slc = shift(slc)
+					if j%2 == 0 {
+						slc = append(slc, el)
+					}
+					j += 1
+				}
+			}
+		})
 	}
 }

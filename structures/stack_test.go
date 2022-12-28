@@ -55,5 +55,47 @@ func BenchmarkStack(b *testing.B) {
 				}
 			}
 		})
+		b.Run(fmt.Sprintf("stack push and pop %v", desc), func(b *testing.B) {
+			for r := 0; r < b.N; r++ {
+				s := NewStack[int]()
+				for j, i := range tc.Slice {
+					s.Push(i)
+					if j%2 == 0 {
+						s.Pop()
+					}
+				}
+				j := 0
+				for s.Len() > 0 {
+					el, _ := s.Pop()
+					if j%2 == 0 {
+						s.Push(el)
+					}
+					j += 1
+				}
+				for i := 0; i < s.Len(); i++ {
+					s.Pop()
+				}
+			}
+		})
+		b.Run(fmt.Sprintf("slice push and pop %v", desc), func(b *testing.B) {
+			for r := 0; r < b.N; r++ {
+				var slc []int
+				for j, i := range tc.Slice {
+					slc = append(slc, i)
+					if j%2 == 0 {
+						_, slc = pop(slc)
+					}
+				}
+				j := 0
+				for len(slc) > 0 {
+					var el int
+					el, slc = pop(slc)
+					if j%2 == 0 {
+						slc = append(slc, el)
+					}
+					j += 1
+				}
+			}
+		})
 	}
 }
