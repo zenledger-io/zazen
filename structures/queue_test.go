@@ -27,9 +27,6 @@ func BenchmarkQueue(b *testing.B) {
 		"100k items": {
 			Slice: createSlice(100_000),
 		},
-		"1M items": {
-			Slice: createSlice(1_000_000),
-		},
 	}
 
 	for desc, tc := range tcs {
@@ -68,7 +65,7 @@ func BenchmarkQueue(b *testing.B) {
 				for q.Len() > 0 {
 					el, _ := q.Dequeue()
 					if j%2 == 0 {
-						q.Enqueue(el)
+						q.Prepend(el)
 					}
 					j += 1
 				}
@@ -88,7 +85,7 @@ func BenchmarkQueue(b *testing.B) {
 					var el int
 					el, slc = shift(slc)
 					if j%2 == 0 {
-						slc = append(slc, el)
+						slc = append([]int{el}, slc...)
 					}
 					j += 1
 				}

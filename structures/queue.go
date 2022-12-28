@@ -4,6 +4,7 @@ package structures
 type Queue[T any] interface {
 	Enqueue(T)
 	Dequeue() (T, bool)
+	Prepend(T)
 	Len() int
 }
 
@@ -33,6 +34,10 @@ func (q *queue[T]) Enqueue(value T) {
 
 func (q *queue[T]) Dequeue() (T, bool) {
 	return q.l.Shift()
+}
+
+func (q *queue[T]) Prepend(value T) {
+	q.l.Unshift(value)
 }
 
 func (q *queue[T]) Len() int {
