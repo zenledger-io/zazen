@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/stretchr/testify/require"
 	"math/rand"
+	"sort"
 	"testing"
 )
 
@@ -52,6 +53,10 @@ func TestBinaryHeap(t *testing.T) {
 
 func BenchmarkBinaryHeap(b *testing.B) {
 	shift := func(slc []int) (int, []int) {
+		// simulate current tax calc hifo
+		sort.Slice(slc, func(i, j int) bool {
+			return slc[i] > slc[j]
+		})
 		return slc[0], slc[1:]
 	}
 
@@ -65,14 +70,11 @@ func BenchmarkBinaryHeap(b *testing.B) {
 	tcs := map[string]struct {
 		Slice []int
 	}{
+		"5k items": {
+			Slice: createSlice(5_000),
+		},
 		"10k items": {
 			Slice: createSlice(10_000),
-		},
-		"100k items": {
-			Slice: createSlice(100_000),
-		},
-		"1M items": {
-			Slice: createSlice(1_000_000),
 		},
 	}
 

@@ -36,44 +36,40 @@ func (bh *binaryHeap[T]) Pop() T {
 }
 
 func (bh *binaryHeap[T]) bubbleUp(i int) {
-	if i == 0 {
-		return
-	}
+	for i > 0 {
+		pi := i - 1
+		if i%2 == 0 {
+			pi -= 1
+		}
+		pi = pi / 2
+		if bh.compFn(bh.slc[pi], bh.slc[i]) >= 0 {
+			return
+		}
 
-	pi := i - 1
-	if i%2 == 0 {
-		pi -= 1
+		bh.swap(i, pi)
+		i = pi
 	}
-	pi = pi / 2
-	if bh.compFn(bh.slc[pi], bh.slc[i]) >= 0 {
-		return
-	}
-
-	bh.swap(i, pi)
-	bh.bubbleUp(pi)
 }
 
 func (bh *binaryHeap[T]) bubbleDown(i int) {
-	if i >= bh.Len()-1 {
-		return
-	}
+	for i < bh.Len()-1 {
+		li := 2*i + 1
+		if li >= bh.Len() {
+			return
+		}
 
-	li := 2*i + 1
-	if li >= bh.Len() {
-		return
-	}
+		ri := 2*i + 2
+		ci := li
+		if ri < bh.Len() && bh.compFn(bh.slc[ri], bh.slc[li]) > 0 {
+			ci = ri
+		}
+		if bh.compFn(bh.slc[i], bh.slc[ci]) >= 0 {
+			return
+		}
 
-	ri := 2*i + 2
-	ci := li
-	if ri < bh.Len() && bh.compFn(bh.slc[ri], bh.slc[li]) > 0 {
-		ci = ri
+		bh.swap(i, ci)
+		i = ci
 	}
-	if bh.compFn(bh.slc[i], bh.slc[ci]) >= 0 {
-		return
-	}
-
-	bh.swap(i, ci)
-	bh.bubbleDown(ci)
 }
 
 func (bh *binaryHeap[T]) swap(i, j int) {
