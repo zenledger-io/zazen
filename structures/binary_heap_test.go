@@ -99,7 +99,7 @@ func BenchmarkBinaryHeap(b *testing.B) {
 					slc = append(slc, i)
 				}
 				for i := 0; i < len(slc); i++ {
-					shift(slc)
+					_, slc = shift(slc)
 				}
 			}
 		})
