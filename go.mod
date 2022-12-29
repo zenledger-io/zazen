@@ -1,6 +1,6 @@
 module github.com/zenledger-io/zazen
 
-go 1.18
+go 1.19
 
 require (
 	github.com/DataDog/datadog-go v4.8.2+incompatible
@@ -12,7 +12,6 @@ require (
 	github.com/honeybadger-io/honeybadger-go v0.5.0
 	github.com/stretchr/testify v1.7.0
 	go.uber.org/zap v1.13.0
-	golang.org/x/exp v0.0.0-20221217163422-3c43f8badb15
 	gopkg.in/DataDog/dd-trace-go.v1 v1.37.1
 )
 
@@ -29,6 +28,7 @@ require (
 	github.com/dustin/go-humanize v1.0.0 // indirect
 	github.com/go-ole/go-ole v1.2.5 // indirect
 	github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b // indirect
+	github.com/google/go-cmp v0.5.8 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/mailru/easyjson v0.7.7 // indirect
 	github.com/pborman/uuid v1.2.0 // indirect

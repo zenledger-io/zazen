@@ -82,6 +82,42 @@ func TestInsert(t *testing.T) {
 	}
 }
 
+func TestInsertInSortedSlice(t *testing.T) {
+	tcs := map[string]struct {
+		Slice    []int
+		Append   int
+		Expected []int
+	}{
+		"even number with duplicates": {
+			Slice:    []int{0, 1, 2, 3, 4, 4},
+			Append:   3,
+			Expected: []int{0, 1, 2, 3, 3, 4, 4},
+		},
+		"odd number with duplicates": {
+			Slice:    []int{0, 1, 2, 3, 3, 4, 4},
+			Append:   3,
+			Expected: []int{0, 1, 2, 3, 3, 3, 4, 4},
+		},
+		"empty": {
+			Slice:    []int{},
+			Append:   3,
+			Expected: []int{3},
+		},
+	}
+
+	for desc, tc := range tcs {
+		t.Run(desc, func(t *testing.T) {
+			slc := InsertInSortedSlice(tc.Slice, tc.Append, func(a, b int) bool {
+				return a < b
+			})
+			require.Equal(t, len(tc.Expected), len(slc))
+			for i, el := range tc.Expected {
+				require.Equal(t, el, slc[i])
+			}
+		})
+	}
+}
+
 func BenchmarkInsert(b *testing.B) {
 	createSlice := func(limit int) []int {
 		slc := make([]int, limit, limit+1)
@@ -109,12 +145,19 @@ func BenchmarkInsert(b *testing.B) {
 		},
 	}
 
+	smaller := func(a, b int) bool {
+		return a < b
+	}
+
 	for desc, tc := range tcs {
 		b.Run(fmt.Sprintf("insertion sort %v", desc), func(b *testing.B) {
 			for r := 0; r < b.N; r++ {
-				_ = Insert(tc.Slice, tc.Append, func(a, b int) bool {
-					return a < b
-				})
+				_ = Insert(tc.Slice, tc.Append, smaller)
+			}
+		})
+		b.Run(fmt.Sprintf("insertion into sorted sort %v", desc), func(b *testing.B) {
+			for r := 0; r < b.N; r++ {
+				_ = InsertInSortedSlice(tc.Slice, tc.Append, smaller)
 			}
 		})
 		b.Run(fmt.Sprintf("built in sort %v", desc), func(b *testing.B) {
