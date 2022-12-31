@@ -7,8 +7,7 @@ import (
 type AdjacencyList[T comparable, O constraints.Ordered] interface {
 	AddEdge(n1, n2 T, weight O)
 	AddUndirectedEdge(n1, n2 T, weight O)
-	// Edges returns all edges for a given node, return true to stop
-	Edges(node T, fn func(node T, weight O) bool)
+	Edges(node T, fn func(node T, weight O))
 	Len() int
 }
 
@@ -38,12 +37,9 @@ func (l *adjacencyList[T, O]) AddEdge(n1, n2 T, weight O) {
 	})
 }
 
-// Edges returns if the passed function returns true
-func (l *adjacencyList[T, O]) Edges(t T, fn func(T, O) bool) {
+func (l *adjacencyList[T, O]) Edges(t T, fn func(T, O)) {
 	for _, n := range l.m[t] {
-		if fn(n.Node, n.Weight) {
-			return
-		}
+		fn(n.Node, n.Weight)
 	}
 }
 

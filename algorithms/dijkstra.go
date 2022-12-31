@@ -32,16 +32,15 @@ func Dijkstra[T comparable, O constraints.Ordered](al structures.AdjacencyList[T
 	minv, ok := findMinV()
 	for ok {
 		visited[minv] = true
-		al.Edges(minv, func(v T, w O) bool {
+		al.Edges(minv, func(v T, w O) {
 			if visited[v] {
-				return false
+				return
 			}
 
 			d := distances[minv] + w
 			if _, ok := distances[v]; !ok || distances[v] > d {
 				distances[v] = d
 			}
-			return false
 		})
 		minv, ok = findMinV()
 	}
