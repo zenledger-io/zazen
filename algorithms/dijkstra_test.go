@@ -3,6 +3,7 @@ package algorithms
 import (
 	"github.com/stretchr/testify/require"
 	"github.com/zenledger-io/zazen/structures"
+	"math/rand"
 	"testing"
 )
 
@@ -82,5 +83,19 @@ func TestDijkstra(t *testing.T) {
 				require.Equal(t, v, distances[k])
 			}
 		})
+	}
+}
+
+func BenchmarkDijkstra(b *testing.B) {
+	al := structures.NewAdjacencyList[int, int]()
+	for i := 0; i < 10_000; i++ {
+		al.AddUndirectedEdge(i, i+1, rand.Int())
+		if i >= 2 {
+			al.AddUndirectedEdge(i-2, i+1, rand.Int())
+		}
+	}
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		Dijkstra(al, al.Len()/2)
 	}
 }
