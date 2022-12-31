@@ -30,6 +30,20 @@ func TestDijkstra(t *testing.T) {
 				"C": 1,
 			},
 		},
+		"origin does not exist": {
+			AddEdges: func(list structures.AdjacencyList[string, int]) {
+				list.AddEdge("B", "A", 1)
+				list.AddEdge("A", "B", 3)
+
+				list.AddEdge("A", "C", 1)
+				list.AddEdge("C", "A", 2)
+
+				list.AddEdge("C", "B", 1)
+				list.AddEdge("B", "C", 5)
+			},
+			Origin:   "Z",
+			Expected: map[string]int{"Z": 0},
+		},
 		"5 nodes": {
 			AddEdges: func(list structures.AdjacencyList[string, int]) {
 				list.AddEdge("B", "A", 1)
