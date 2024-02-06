@@ -15,6 +15,7 @@ const (
 var (
 	HoneybadgerAPIKey string
 	HoneybadgerSync   bool
+	HoneybadgerEnv    string
 )
 
 type honeybadgerReporter struct{}
@@ -72,6 +73,7 @@ func getHoneybadgerConfig(ctx context.Context) honeybadger.Configuration {
 		Logger: ContextLogger(ctx),
 		APIKey: HoneybadgerAPIKey,
 		Sync:   HoneybadgerSync,
+		Env:    HoneybadgerEnv,
 	}
 }
 
