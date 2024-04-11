@@ -5,15 +5,18 @@ import (
 	"github.com/DataDog/datadog-go/statsd"
 	"github.com/zenledger-io/zazen/httputils"
 	"github.com/zenledger-io/zazen/ioutils"
+	httptrace "gopkg.in/DataDog/dd-trace-go.v1/contrib/net/http"
 	"gopkg.in/DataDog/dd-trace-go.v1/ddtrace"
 	"gopkg.in/DataDog/dd-trace-go.v1/ddtrace/tracer"
 	"net/http"
+	"os"
 )
 
 var (
 	MonitorType      string
 	DatadogDebugMode bool
 	Addr             string
+	ServiceName      string
 )
 
 type datadogMonitor struct{}
@@ -28,6 +31,10 @@ func (m *datadogMonitor) Start(ctx context.Context) error {
 	client, err := statsd.New(Addr)
 	if err != nil {
 		return err
+	}
+
+	if ServiceName == "" {
+		ServiceName = os.Getenv("DD_SERVICE_NAME")
 	}
 
 	tracer.Start(tracer.WithDebugMode(DatadogDebugMode))
@@ -46,7 +53,7 @@ func (m *datadogMonitor) StartTransaction(ctx context.Context, name string) (Tra
 
 func (m *datadogMonitor) CreateWrapHandleFunc(path string) func(h http.HandlerFunc) http.HandlerFunc {
 	return func(h http.HandlerFunc) http.HandlerFunc {
-		return func(w http.ResponseWriter, r *http.Request) {
+		var handlerFunc http.HandlerFunc = func(w http.ResponseWriter, r *http.Request) {
 			tx, ctx := NewDatadogTransaction(r.Context(), path)
 			defer tx.End()
 
@@ -63,6 +70,10 @@ func (m *datadogMonitor) CreateWrapHandleFunc(path string) func(h http.HandlerFu
 				"http.request.bytes":  bWrapper.ByteLength,
 				"http.response.bytes": wWrapper.ByteLength,
 			})
+		}
+		handler := httptrace.WrapHandler(http.Handler(handlerFunc), ServiceName, "http.Handler")
+		return func(w http.ResponseWriter, r *http.Request) {
+			handler.ServeHTTP(w, r)
 		}
 	}
 }
