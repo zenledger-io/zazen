@@ -2,18 +2,21 @@ package ratelimit
 
 import (
 	"context"
-	"github.com/go-redis/redis/v8"
-	redisrate "github.com/go-redis/redis_rate/v9"
+	redisrate "github.com/go-redis/redis_rate/v10"
+	"github.com/redis/go-redis/v9"
 	"time"
 )
 
-// Rediser is a copied from a non exported interface in github.com/go-redis/redis_rate/v9
+// Rediser is a copied from a non exported interface in github.com/go-redis/redis_rate/v10
 type Rediser interface {
 	Eval(ctx context.Context, script string, keys []string, args ...interface{}) *redis.Cmd
 	EvalSha(ctx context.Context, sha1 string, keys []string, args ...interface{}) *redis.Cmd
 	ScriptExists(ctx context.Context, hashes ...string) *redis.BoolSliceCmd
 	ScriptLoad(ctx context.Context, script string) *redis.StringCmd
 	Del(ctx context.Context, keys ...string) *redis.IntCmd
+
+	EvalRO(ctx context.Context, script string, keys []string, args ...interface{}) *redis.Cmd
+	EvalShaRO(ctx context.Context, sha1 string, keys []string, args ...interface{}) *redis.Cmd
 }
 
 func NewRedisLimiter(r Rediser, key string, rate int, period time.Duration) Limiter {
