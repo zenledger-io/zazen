@@ -54,7 +54,7 @@ func (m *datadogMonitor) StartTransaction(ctx context.Context, name string) (Tra
 func (m *datadogMonitor) CreateWrapHandleFunc(path string) func(h http.HandlerFunc) http.HandlerFunc {
 	return func(h http.HandlerFunc) http.HandlerFunc {
 		var handlerFunc http.HandlerFunc = func(w http.ResponseWriter, r *http.Request) {
-			tx, ctx := NewDatadogTransaction(r.Context(), path)
+			tx, ctx := NewDatadogTransaction(r.Context(), r.URL.Path)
 			defer tx.End()
 
 			wWrapper := httputils.NewMeasuredResponseWriter(w)
@@ -71,7 +71,7 @@ func (m *datadogMonitor) CreateWrapHandleFunc(path string) func(h http.HandlerFu
 				"http.response.bytes": wWrapper.ByteLength,
 			})
 		}
-		handler := httptrace.WrapHandler(http.Handler(handlerFunc), ServiceName, "http.Handler")
+		handler := httptrace.WrapHandler(http.Handler(handlerFunc), ServiceName, path)
 		return func(w http.ResponseWriter, r *http.Request) {
 			handler.ServeHTTP(w, r)
 		}
